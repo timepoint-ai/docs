@@ -1,0 +1,79 @@
+---
+title: TDF (Timepoint Data Format)
+description: "JSON-LD interchange format connecting all Timepoint services. Content-addressed via SHA-256."
+---
+
+# TDF — Timepoint Data Format
+
+**The universal data contract.** JSON-LD interchange format for temporal causal data. Every service in the Timepoint suite speaks TDF. Content-addressed via SHA-256 hash.
+
+<Card title="GitHub" icon="github" href="https://github.com/timepoint-ai/timepoint-tdf">
+  `timepoint-ai/timepoint-tdf` — Apache-2.0, Pure Python, Pydantic
+</Card>
+
+## Record Structure
+
+```python
+TDFRecord:
+    id: str           # Clockchain canonical URL or Flash/Pro UUID
+    version: str      # "1.0.0"
+    source: str       # "clockchain" | "flash" | "pro" | "proteus" | "snag-bench"
+    timestamp: datetime
+    provenance: TDFProvenance
+        generator: str
+        run_id: str
+        confidence: float
+        flash_id: str | None
+    payload: dict     # Source-specific content
+    tdf_hash: str     # SHA-256 of canonicalized payload
+```
+
+## Transforms
+
+Convert service-specific output to TDF:
+
+```python
+from timepoint_tdf import from_flash, from_clockchain, from_pro
+
+# From Flash scene
+tdf_record = from_flash(flash_output)
+
+# From Clockchain node
+tdf_record = from_clockchain(node_data)
+
+# From Pro simulation
+tdf_record = from_pro(pro_output)
+```
+
+## Content Addressing
+
+Every TDF record includes a `tdf_hash` — the SHA-256 of the canonicalized payload. This enables:
+
+- **Deduplication** across services
+- **Integrity verification** end-to-end
+- **Immutable references** between graph nodes
+
+## Installation
+
+```bash
+pip install -e "git+https://github.com/timepoint-ai/timepoint-tdf.git#egg=timepoint-tdf"
+```
+
+Single dependency: `pydantic>=2.0`
+
+## Service Integration
+
+```
+                ┌──────────────┐
+                │  TDF v1.0.0  │
+                │  (pure lib)  │
+                └──────┬───────┘
+                       │
+          ┌────────────┼────────────┬──────────┐
+          │            │            │          │
+     from_flash() from_clockchain() from_pro() (planned)
+          │            │            │          │
+     ┌────▼───┐  ┌────▼──────┐ ┌──▼───┐ ┌───▼─────┐
+     │ Flash  │  │Clockchain │ │ Pro  │ │Proteus  │
+     └────────┘  └───────────┘ └──────┘ └─────────┘
+```

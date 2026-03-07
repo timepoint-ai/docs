@@ -1,0 +1,92 @@
+---
+title: Timepoint Flash
+description: "The Reality Writer — renders grounded historical moments via a 14-agent critique-loop pipeline."
+---
+
+# Timepoint Flash
+
+**Experience Synthetic Time Travel** — type any moment in history, get a complete historically grounded scene in seconds: characters with distinct voices, period-accurate dialog, relationship dynamics, and a photorealistic image — all verified against Google Search.
+
+<Card title="GitHub" icon="github" href="https://github.com/timepoint-ai/timepoint-flash">
+  `timepoint-ai/timepoint-flash` — Apache-2.0, Python 3.10+, FastAPI
+</Card>
+
+## How It Works
+
+Flash uses a 14-agent pipeline where each agent specializes in one aspect of scene construction. The pipeline includes automated critique and retry loops to ensure historical accuracy.
+
+```
+Query → Judge → Timeline → Grounding (Google Search)
+    → Scene → Characters + Moment + Camera [parallel]
+    → Dialog → Critique (auto-retry)
+    → ImagePrompt → Optimizer → ImageGen
+```
+
+### Agent Pipeline
+
+| Agent | Role |
+|-------|------|
+| **Judge** | Validates query, extracts temporal/spatial coordinates |
+| **Timeline** | Builds historical context and event sequence |
+| **Grounding** | Verifies facts against Google Search |
+| **Scene** | Constructs physical setting, atmosphere, lighting |
+| **Characters** | Builds character profiles with distinct voices |
+| **Moment** | Captures the emotional/dramatic core |
+| **Camera** | Composes the visual frame |
+| **Dialog** | Generates period-accurate character speech |
+| **Critique** | Reviews for anachronisms, errors — auto-retries if needed |
+| **ImagePrompt** | Translates scene to image generation prompt |
+| **Optimizer** | Refines prompt for photorealism |
+| **ImageGen** | 3-tier fallback: Google Imagen → OpenRouter Flux → Pollinations |
+
+## Example Output
+
+**Query:** *"AlphaGo plays Move 37 against Lee Sedol, Seoul, March 10 2016"*
+
+**Result:**
+- Full scene with location, date, atmosphere, tension level
+- 5 characters with distinct speaking patterns
+- Multi-turn dialog capturing the moment
+- Photorealistic image
+- Source citations and confidence scores
+- TDF-formatted output with provenance
+
+## API
+
+```bash
+# Synchronous render
+POST /api/v1/timepoints/generate/sync
+Content-Type: application/json
+
+{"query": "Moon landing, July 20 1969", "generate_image": true}
+
+# Streaming render (SSE)
+POST /api/v1/timepoints/generate/stream
+```
+
+## LLM Providers
+
+| Provider | Role | Required |
+|----------|------|----------|
+| **Google Gemini** | Primary LLM for all agents | Yes |
+| **OpenRouter** | Fallback LLM | Optional |
+
+## Image Generation
+
+3-tier fallback chain:
+
+1. **Google Imagen** (primary)
+2. **OpenRouter Flux** (fallback)
+3. **Pollinations.ai** (free fallback)
+
+## Installation
+
+```bash
+git clone https://github.com/timepoint-ai/timepoint-flash.git
+cd timepoint-flash
+pip install -e .
+export GOOGLE_API_KEY="your-key"
+flash serve
+```
+
+**Live API:** `api.timepointai.com`

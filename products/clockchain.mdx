@@ -1,0 +1,91 @@
+---
+title: Clockchain
+description: "Persistent temporal causal graph — PostgreSQL-backed directed graph that grows autonomously."
+---
+
+# Clockchain
+
+**Temporal causal graph for AI agents.** PostgreSQL-backed directed graph of historical moments — canonical spatiotemporal URLs, typed causal edges, autonomous expansion, and browse/search/discovery APIs.
+
+<Card title="GitHub" icon="github" href="https://github.com/timepoint-ai/timepoint-clockchain">
+  `timepoint-ai/timepoint-clockchain` — Apache-2.0, Python 3.11+, FastAPI
+</Card>
+
+## Why This Exists
+
+AI agents that reason about causality across time currently rely on web search (noisy, unstructured), knowledge graphs (no temporal dimension), or hallucination. The Clockchain is a structured alternative: every node carries dialog, entity states, provenance, and confidence, addressed by a canonical spatiotemporal URL, in a format (TDF) designed for machine consumption.
+
+## Graph Architecture
+
+Two PostgreSQL tables: `nodes` (canonical spatiotemporal URLs as PKs) and `edges` (source, target, type, weight).
+
+### Canonical URL Format
+
+```
+/-44/march/15/1030/italy/lazio/rome/assassination-of-julius-caesar
+```
+
+8 segments: year (negative = BCE), month, day, time (24hr), country, region, city, slug.
+
+### Content Layers
+
+| Layer | Content | Source |
+|-------|---------|--------|
+| 0 | URL path + event name | Auto-generated |
+| 1 | Metadata: figures, tags, description | Expander (LLM) |
+| 2 | Full Flash scene with dialog, characters, image | Flash renderer |
+
+### Edge Types
+
+| Type | Meaning | Auto-linked? |
+|------|---------|-------------|
+| `causes` | Direct causal relationship | No — expander or manual |
+| `contemporaneous` | Same year (+/- 1) | Yes, weight 0.5 |
+| `same_location` | Matching geography | Yes, weight 0.5 |
+| `thematic` | Overlapping tags | Yes, weight 0.3 |
+
+## Background Workers
+
+| Worker | Role |
+|--------|------|
+| **Renderer** | Calls Flash to upgrade layer-1 nodes to layer-2 (full scenes) |
+| **Expander** | LLM-driven graph growth — discovers related moments, renders each through Flash |
+| **Judge** | Content moderation |
+| **Daily** | "Today in History" cron — adds new nodes for the current date |
+
+## Public API
+
+No authentication required for read access:
+
+```bash
+# Graph statistics
+GET /api/v1/stats
+
+# List moments (paginated, filterable)
+GET /api/v1/moments?limit=10&offset=0&q=rome&year_from=-500&year_to=500
+
+# Get a specific moment
+GET /api/v1/moments/{canonical-path}
+```
+
+### Rate Limits
+
+| Tier | Limit |
+|------|-------|
+| Public (unauthenticated) | 60/min |
+| Authenticated reads | 300/min |
+| Authenticated writes | 30/min |
+
+## The Bayesian Flywheel
+
+Each new event with causal edges tightens the Bayesian prior — fewer plausible things *could* have happened in the gaps — approaching asymptotic coverage of any historical period.
+
+```
+Flash scenes ──► Clockchain Graph ──► Stronger Prior
+Pro simulations ─┘        │               │
+                          ▼               │
+                    Expander (LLM) ◄──────┘
+                    discovers gaps
+```
+
+*The name is conceptual. This is PostgreSQL, not a blockchain.*

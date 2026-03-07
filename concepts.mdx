@@ -1,0 +1,88 @@
+---
+title: Core Concepts
+description: "Key concepts in the Timepoint ecosystem — timepoints, SNAG, temporal modes, and the Clockchain."
+---
+
+# Core Concepts
+
+## Timepoints
+
+A Timepoint is a verified, confidence-scored node in a temporal causal graph. It's a structured record of a moment — who was there, what they said, why it mattered, what happened next.
+
+Every timepoint has a **canonical spatiotemporal URL** — 8 segments encoding *when* and *where*:
+
+```
+/-44/march/15/1030/italy/lazio/rome/assassination-of-julius-caesar
+  │    │    │   │     │     │    │    └── slug
+  │    │    │   │     │     │    └─────── city
+  │    │    │   │     │     └──────────── region
+  │    │    │   │     └───────────────── country
+  │    │    │   └───────────────────── time (24hr)
+  │    │    └───────────────────────── day
+  │    └────────────────────────────── month
+  └─────────────────────────────────── year (negative = BCE)
+```
+
+This path is both the node's primary key and its API address.
+
+## SNAG (Social Network Augmented Generation)
+
+SNAG synthesizes and maintains structured social graphs to ground LLM generation in complex group dynamics. Where RAG answers questions from what was written down, SNAG reasons about what people *did*, *felt*, and *caused*.
+
+**19 composable mechanisms** handle entity states, knowledge provenance, dialog steering, emotional dynamics, relationship tracking, and more. Each mechanism can be enabled/disabled independently.
+
+## Temporal Modes
+
+Timepoint Pro supports five temporal reasoning modes:
+
+| Mode | Description | Use Case |
+|------|-------------|----------|
+| **FORWARD** | Strict forward causality | Standard timelines, "what happens next" |
+| **PORTAL** | Backward from target outcome | Goal decomposition, "how did we get here" |
+| **BRANCHING** | Counterfactual branches | "What if" analysis, alternate histories |
+| **CYCLICAL** | Future constrains past | Feedback loops, self-fulfilling prophecies |
+| **DIRECTORIAL** | Dramatic tension drives events | Narrative arcs, screenplay generation |
+
+## Content Layers
+
+The Clockchain stores moments at increasing levels of detail:
+
+| Layer | Content | Source |
+|-------|---------|--------|
+| 0 | URL path + event name | Clockchain (auto-generated) |
+| 1 | Metadata: figures, tags, description | Clockchain expander (LLM) |
+| 2 | Full rendered scene with dialog, characters, image | Flash renderer |
+
+## Edge Types
+
+Moments are connected by typed causal edges:
+
+| Type | Meaning | Auto-linked? |
+|------|---------|-------------|
+| `causes` | Direct causal relationship | No — expander or manual |
+| `contemporaneous` | Same year (+/- 1) | Yes |
+| `same_location` | Matching geography | Yes |
+| `thematic` | Overlapping tags | Yes |
+
+Each edge tightens the Bayesian prior — fewer plausible things *could* have happened in the gaps.
+
+## TDF (Timepoint Data Format)
+
+JSON-LD interchange format connecting all services. Every TDF record includes:
+
+- **id** — canonical URL or service UUID
+- **source** — which service produced it (flash, clockchain, pro, proteus, snag-bench)
+- **provenance** — generator, run ID, confidence score
+- **payload** — source-specific content
+- **tdf_hash** — SHA-256 of canonicalized payload for content addressing
+
+## The Flywheel
+
+The system forms a self-reinforcing loop:
+
+1. **Flash** renders historical moments into grounded scenes
+2. **Clockchain** stores them as graph nodes with causal edges
+3. **Expander** (LLM) discovers related moments and grows the graph
+4. **Pro** simulates futures from any graph state
+5. **SNAG-Bench** scores quality across all outputs
+6. More data → stronger Bayesian prior → better renderings → more data

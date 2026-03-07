@@ -1,0 +1,114 @@
+---
+title: Quickstart
+description: "Get started with Timepoint AI — render your first historical moment in minutes."
+---
+
+# Quickstart
+
+## Flash — Render a Historical Moment
+
+Flash is the fastest way to see Timepoint in action. It generates grounded historical scenes from natural language.
+
+### Prerequisites
+
+- Python 3.10+
+- A Google API key ([free at AI Studio](https://aistudio.google.com))
+
+### Install and Run
+
+```bash
+git clone https://github.com/timepoint-ai/timepoint-flash.git
+cd timepoint-flash
+pip install -e .
+```
+
+Set your API key:
+
+```bash
+export GOOGLE_API_KEY="your-key-here"
+```
+
+Start the server:
+
+```bash
+flash serve
+```
+
+### Render a Moment
+
+```bash
+curl -X POST http://localhost:8000/api/v1/timepoints/generate/sync \
+  -H "Content-Type: application/json" \
+  -d '{"query": "AlphaGo plays Move 37, Seoul, March 10 2016", "generate_image": true}'
+```
+
+You'll get back a complete scene: characters with distinct voices, period-accurate dialog, relationship dynamics, source citations, and a photorealistic image.
+
+---
+
+## Pro — Run a Social Simulation
+
+Pro is the SNAG engine — it simulates social dynamics with causal provenance.
+
+### Install and Run
+
+```bash
+git clone https://github.com/timepoint-ai/timepoint-pro.git
+cd timepoint-pro
+pip install -e .
+```
+
+Set your LLM provider:
+
+```bash
+export OPENROUTER_API_KEY="your-key-here"
+```
+
+### Run a Simulation
+
+```bash
+python run.sh --template board-meeting --fidelity 3
+```
+
+Pro supports 21 verified templates at $0.15–$1.00 per run.
+
+---
+
+## Clockchain — Query the Graph
+
+The Clockchain is a public API — no authentication needed for read access.
+
+### Browse Moments
+
+```bash
+# Get graph statistics
+curl https://timepoint-clockchain-deploy-private-production.up.railway.app/api/v1/stats
+
+# List moments
+curl "https://timepoint-clockchain-deploy-private-production.up.railway.app/api/v1/moments?limit=10"
+
+# Search by keyword
+curl "https://timepoint-clockchain-deploy-private-production.up.railway.app/api/v1/moments?q=rome"
+
+# Filter by date range
+curl "https://timepoint-clockchain-deploy-private-production.up.railway.app/api/v1/moments?year_from=1900&year_to=2000"
+```
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Core Concepts" icon="book" href="/concepts">
+    Understand timepoints, SNAG, and temporal modes
+  </Card>
+  <Card title="Flash Deep Dive" icon="bolt" href="/products/flash">
+    The 14-agent pipeline explained
+  </Card>
+  <Card title="API Reference" icon="code" href="/api-reference/overview">
+    Full endpoint documentation
+  </Card>
+  <Card title="Clockchain" icon="link" href="/products/clockchain">
+    How the temporal graph works
+  </Card>
+</CardGroup>

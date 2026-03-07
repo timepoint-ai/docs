@@ -1,0 +1,87 @@
+---
+title: Introduction
+description: "Timepoint AI — infrastructure for temporal reasoning. Render the past. Simulate the future. Score the predictions. Accumulate the graph."
+---
+
+# Timepoint AI
+
+Timepoint is the infrastructure layer for temporal reasoning. We render the past to understand it. We render the future to choose it.
+
+## What is Timepoint?
+
+Timepoint is an open-source ecosystem of six integrated services that work together to build a persistent, growing model of historical and future causality:
+
+<CardGroup cols={2}>
+  <Card title="Flash" icon="bolt" href="/products/flash">
+    **The Reality Writer** — type any moment in history, get a grounded scene with characters, dialog, and a photorealistic image via a 14-agent critique-loop pipeline.
+  </Card>
+  <Card title="Pro" icon="brain" href="/products/pro">
+    **The SNAG Engine** — social simulation with 19 composable mechanisms, 5 temporal modes, causal provenance, and structured social graphs.
+  </Card>
+  <Card title="Clockchain" icon="link" href="/products/clockchain">
+    **The Temporal Causal Graph** — PostgreSQL-backed directed graph that accumulates rendered past and simulated future into a growing Bayesian prior.
+  </Card>
+  <Card title="TDF" icon="file-code" href="/products/tdf">
+    **The Data Format** — JSON-LD interchange format with content-addressed SHA-256 hashing. The universal data contract.
+  </Card>
+  <Card title="SNAG-Bench" icon="chart-bar" href="/products/snag-bench">
+    **The Quality Certifier** — temporal reasoning benchmark with 60 adversarial tasks, 5 scoring axes, designed to stay hard through 2030.
+  </Card>
+  <Card title="Proteus" icon="coins" href="/products/proteus">
+    **The Settlement Layer** — prediction market protocol on BASE L2 where rendered futures are scored against reality.
+  </Card>
+</CardGroup>
+
+## Core Concept: SNAG
+
+**Social Network Augmented Generation** synthesizes and maintains structured social graphs — with causal provenance, knowledge flow, emotional states, and temporal consistency — to ground LLM generation in complex group dynamics.
+
+Where **RAG** answers questions from what was written down, **SNAG** reasons about what people *did*, *felt*, and *caused*.
+
+| | RAG | SNAG |
+|---|---|---|
+| **Input** | Document corpus | Scenario + entities + relationships |
+| **Structure** | Flat chunks | Directed causal graph |
+| **Temporal** | Snapshot | Multi-mode (forward, branching, cyclical) |
+| **Output** | Answer + citations | Simulation state + dialog + provenance |
+
+## Architecture
+
+```
+                        timepointai.com
+                              │
+                    ┌─────────▼──────────┐
+                    │   Flash (Renderer)  │──── Grounded scenes
+                    └─────────▲──────────┘
+                              │
+              ┌───────────────┼───────────────┐
+              │               │               │
+     ┌────────┴────────┐ ┌───┴────┐ ┌────────┴────────┐
+     │   Clockchain    │ │  Pro   │ │   SNAG-Bench    │
+     │  (Causal Graph) │ │ (SNAG) │ │  (Benchmark)    │
+     └────────┬────────┘ └───┬────┘ └─────────────────┘
+              │               │
+              └───────┬───────┘
+                      │
+              ┌───────▼───────┐
+              │      TDF      │
+              │ (Data Format) │
+              └───────────────┘
+```
+
+## Get Started
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Clone, install, and render your first moment
+  </Card>
+  <Card title="Core Concepts" icon="book" href="/concepts">
+    Timepoints, temporal modes, and the Clockchain
+  </Card>
+  <Card title="API Reference" icon="code" href="/api-reference/overview">
+    Flash, Clockchain, and Pro API endpoints
+  </Card>
+  <Card title="GitHub" icon="github" href="https://github.com/timepoint-ai">
+    All source code — Apache-2.0 licensed
+  </Card>
+</CardGroup>

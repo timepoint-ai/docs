@@ -1,0 +1,83 @@
+---
+title: Flash API
+description: "Render grounded historical moments via the 14-agent pipeline."
+---
+
+# Flash API
+
+**Base URL:** `https://api.timepointai.com`
+
+All endpoints require `X-Service-Key` header authentication.
+
+## Health Check
+
+```bash
+GET /health
+```
+
+No auth required. Returns service status and provider availability.
+
+```json
+{
+  "status": "healthy",
+  "version": "2.4.0",
+  "database": true,
+  "providers": {
+    "google": true,
+    "openrouter": true
+  }
+}
+```
+
+## Render Endpoints
+
+### POST /api/v1/timepoints/generate/sync
+
+Synchronous render — blocks until the full scene is generated.
+
+```bash
+curl -X POST https://api.timepointai.com/api/v1/timepoints/generate/sync \
+  -H "Content-Type: application/json" \
+  -H "X-Service-Key: YOUR_KEY" \
+  -d '{"query": "AlphaGo plays Move 37, Seoul, March 10 2016", "generate_image": true}'
+```
+
+**Request Body:**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `query` | string | Yes | Natural language description of the moment |
+| `generate_image` | boolean | No | Generate photorealistic image (default: false) |
+
+**Response:** Full scene with characters, dialog, atmosphere, relationships, image URL, confidence scores, and source citations. Output is TDF-compatible.
+
+### POST /api/v1/timepoints/generate/stream
+
+Server-Sent Events (SSE) stream — returns pipeline progress in real-time as each agent completes.
+
+```bash
+curl -N -X POST https://api.timepointai.com/api/v1/timepoints/generate/stream \
+  -H "Content-Type: application/json" \
+  -H "X-Service-Key: YOUR_KEY" \
+  -d '{"query": "Moon landing, July 20 1969", "generate_image": true}'
+```
+
+Events are streamed as each agent in the pipeline completes:
+`Judge → Timeline → Grounding → Scene → Characters → Moment → Camera → Dialog → Critique → ImagePrompt → Optimizer → ImageGen`
+
+## Image Generation
+
+Flash uses a 3-tier fallback chain:
+
+1. **Google Imagen** (primary)
+2. **OpenRouter Flux** (fallback)
+3. **Pollinations.ai** (free fallback)
+
+Image URLs are included in the response when `generate_image: true`.
+
+## LLM Providers
+
+| Provider | Role |
+|----------|------|
+| Google Gemini | Primary LLM for all agents |
+| OpenRouter | Fallback with dynamic model registry |

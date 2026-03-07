@@ -1,0 +1,40 @@
+---
+title: Proteus
+description: "Prediction market protocol on BASE L2 — stake ETH on exact text predictions, settled by on-chain Levenshtein distance."
+---
+
+# Proteus
+
+**The Settlement Layer.** Prediction market protocol on BASE (Coinbase L2) where users stake ETH on the exact text a public figure will post. Winners determined by on-chain Levenshtein distance. v0 alpha on BASE Sepolia testnet.
+
+<Card title="GitHub" icon="github" href="https://github.com/timepoint-ai/proteus">
+  `timepoint-ai/proteus` — MIT, Python + Solidity, Flask + Hardhat
+</Card>
+
+## How It Works
+
+1. **Create a market** — predict what a public figure will post
+2. **Stake ETH** — back your prediction with real value
+3. **Oracle resolves** — actual post is fetched and compared
+4. **Levenshtein scoring** — on-chain text similarity determines winners
+5. **Settlement** — ETH distributed proportional to prediction accuracy
+
+## Architecture
+
+- **Backend:** Python (Flask)
+- **Contracts:** Solidity via Hardhat, deployed on BASE Sepolia
+- **Auth:** JWT (MetaMask) + email OTP (Coinbase Embedded Wallet)
+- **Data:** Zero database for markets — all on-chain. Redis for caching/auth only
+
+## Deployed Contracts (BASE Sepolia)
+
+| Contract | Address |
+|----------|---------|
+| PredictionMarketV2 | `0x5174Da96BCA87c78591038DEe9DB1811288c9286` |
+| GenesisNFT | `0x1A5D4475881B93e876251303757E60E524286A24` |
+
+## Timepoint Integration
+
+Proteus closes the feedback loop: Pro simulates futures, Proteus settles them against reality. Planned SNAG-Bench Axis 3 (WMNED) will score predictions using Proteus market outcomes.
+
+**Status:** v0 alpha on testnet. TDF record format planned for Phase 2.
