@@ -1,0 +1,57 @@
+---
+title: MCP Server
+description: "Clockchain MCP interface for AI agent frameworks."
+---
+
+# MCP Server
+
+The Clockchain exposes its temporal causal graph via the **Model Context Protocol (MCP)**, making it accessible to any compatible AI agent framework (Claude, GPT, custom agents).
+
+## Status
+
+**In Development** — the Clockchain public API is live and can be used directly by any HTTP-capable agent today. The MCP wrapper adds structured tool definitions for richer integration.
+
+## Available Now (HTTP)
+
+Any AI agent can query the Clockchain directly using the public API:
+
+```bash
+# Get graph stats
+GET /api/v1/stats
+
+# Search moments
+GET /api/v1/moments?q=rome&year_from=-500&year_to=500
+
+# Get specific moment
+GET /api/v1/moments/{canonical-path}
+```
+
+No authentication required. 60 requests/minute rate limit.
+
+## Planned MCP Tools
+
+| Tool | Description |
+|------|-------------|
+| `clockchain_stats` | Get graph statistics (node count, edge types, date range) |
+| `clockchain_search` | Search moments by keyword, date range, entity, location |
+| `clockchain_moment` | Get a specific moment by canonical path with edges |
+| `clockchain_neighbors` | Get causally connected moments |
+| `flash_render` | Render a new historical moment (requires auth) |
+| `pro_simulate` | Run a social simulation (requires auth) |
+
+## Integration Example
+
+Once the MCP server is available, connect it to your AI agent:
+
+```json
+{
+  "mcpServers": {
+    "clockchain": {
+      "url": "https://timepoint-clockchain-deploy-private-production.up.railway.app/mcp",
+      "transport": "sse"
+    }
+  }
+}
+```
+
+Sign up at [timepointai.com](https://timepointai.com) for early access.

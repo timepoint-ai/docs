@@ -1,0 +1,54 @@
+---
+title: Authentication
+description: "How to authenticate with the Timepoint APIs."
+---
+
+# Authentication
+
+## Public Access (No Auth)
+
+The Clockchain public API requires no authentication:
+
+```bash
+curl https://timepoint-clockchain-deploy-private-production.up.railway.app/api/v1/stats
+curl https://timepoint-clockchain-deploy-private-production.up.railway.app/api/v1/moments?limit=10
+```
+
+## Service Key Auth
+
+Flash, Clockchain write endpoints, and Pro use `X-Service-Key` header authentication:
+
+```bash
+curl -H "X-Service-Key: YOUR_KEY" \
+  https://api.timepointai.com/api/v1/timepoints/generate/sync
+```
+
+### Service Keys
+
+| Key | Used By |
+|-----|---------|
+| `FLASH_SERVICE_KEY` | Flash API + Clockchain renderer |
+| `SERVICE_API_KEY` | Clockchain authenticated endpoints |
+| `PRO_API_KEY` | Pro Cloud API |
+| `ADMIN_KEY` | Clockchain admin operations |
+
+## Getting Access
+
+Service keys are currently available via the developer preview program. Sign up at [timepointai.com](https://timepointai.com).
+
+## Health Check
+
+All services expose unauthenticated health endpoints:
+
+```bash
+# Flash
+curl https://api.timepointai.com/health
+# → {"status":"healthy","version":"2.4.0","database":true,"providers":{"google":true,"openrouter":true}}
+
+# Pro Cloud
+curl https://timepoint-pro-cloud-private-production.up.railway.app/health
+# → {"status":"healthy","service":"timepoint-pro-cloud","version":"0.1.0"}
+
+# Clockchain (via stats)
+curl https://timepoint-clockchain-deploy-private-production.up.railway.app/api/v1/stats
+```

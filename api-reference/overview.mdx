@@ -1,0 +1,65 @@
+---
+title: API Overview
+description: "Overview of the Timepoint AI APIs — Flash, Clockchain, and Pro."
+---
+
+# API Overview
+
+The Timepoint ecosystem exposes three HTTP APIs. The Clockchain public endpoints require no authentication. Flash and Pro require service keys.
+
+## Base URLs
+
+| Service | Base URL | Auth Required |
+|---------|----------|---------------|
+| **Flash** | `https://api.timepointai.com` | Yes (`X-Service-Key`) |
+| **Clockchain** (public) | `https://timepoint-clockchain-deploy-private-production.up.railway.app` | No |
+| **Clockchain** (write) | Same as above | Yes (`X-Service-Key`) |
+| **Pro Cloud** | `https://timepoint-pro-cloud-private-production.up.railway.app` | Yes (`PRO_API_KEY`) |
+
+## Quick Examples
+
+### Clockchain — No Auth Needed
+
+```bash
+# Get graph stats
+curl https://timepoint-clockchain-deploy-private-production.up.railway.app/api/v1/stats
+
+# Search moments
+curl "https://timepoint-clockchain-deploy-private-production.up.railway.app/api/v1/moments?q=rome&limit=5"
+```
+
+### Flash — Render a Moment
+
+```bash
+curl -X POST https://api.timepointai.com/api/v1/timepoints/generate/sync \
+  -H "Content-Type: application/json" \
+  -H "X-Service-Key: YOUR_KEY" \
+  -d '{"query": "Moon landing, July 20 1969", "generate_image": true}'
+```
+
+## Response Format
+
+All APIs return JSON. Clockchain public endpoints return paginated results:
+
+```json
+{
+  "items": [...],
+  "total": 196,
+  "limit": 10,
+  "offset": 0
+}
+```
+
+## Rate Limits
+
+| Tier | Limit | Applies To |
+|------|-------|------------|
+| Public | 60/min | Clockchain unauthenticated reads |
+| Auth reads | 300/min | Authenticated GET requests |
+| Auth writes | 30/min | POST/PUT/DELETE with service key |
+
+Rate limit headers: `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`
+
+## CORS
+
+Clockchain public endpoints allow all origins (`CORS_ORIGINS=*`). Rate limit headers are exposed for browser clients.

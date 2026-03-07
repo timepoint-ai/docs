@@ -1,0 +1,114 @@
+---
+title: Clockchain API
+description: "Query the temporal causal graph — public read access, no authentication required."
+---
+
+# Clockchain API
+
+**Base URL:** `https://timepoint-clockchain-deploy-private-production.up.railway.app`
+
+Public endpoints require no authentication. Write/admin endpoints require `X-Service-Key`.
+
+## Public Endpoints
+
+### GET /api/v1/stats
+
+Graph statistics.
+
+```bash
+curl https://timepoint-clockchain-deploy-private-production.up.railway.app/api/v1/stats
+```
+
+**Response:**
+
+```json
+{
+  "total_nodes": 196,
+  "total_edges": 671,
+  "layer_counts": {"2": 196},
+  "edge_type_counts": {
+    "causes": 73,
+    "same_location": 42,
+    "contemporaneous": 474,
+    "thematic": 82
+  },
+  "source_type_counts": {"historical": 196},
+  "date_range": {"min_year": -133, "max_year": 2019},
+  "avg_confidence": null,
+  "last_updated": "2026-03-07T04:35:49Z"
+}
+```
+
+### GET /api/v1/moments
+
+Paginated list of moments with filtering.
+
+**Query Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `limit` | int | Max results (default 20) |
+| `offset` | int | Pagination offset |
+| `q` | string | Full-text search |
+| `year_from` | int | Filter: minimum year |
+| `year_to` | int | Filter: maximum year |
+| `entity` | string | Filter by historical figure |
+| `sort` | string | Sort order |
+
+```bash
+# Search for events in Rome
+curl "https://timepoint-clockchain-deploy-private-production.up.railway.app/api/v1/moments?q=rome&limit=5"
+
+# Events between 1900-2000
+curl "https://timepoint-clockchain-deploy-private-production.up.railway.app/api/v1/moments?year_from=1900&year_to=2000"
+```
+
+**Response:**
+
+```json
+{
+  "items": [
+    {
+      "path": "/1969/july/20/2056/united-states/florida/cape-canaveral/apollo-11-moon-landing",
+      "event_name": "Apollo 11 Moon Landing",
+      "year": 1969,
+      "layer": 2,
+      "figures": ["Neil Armstrong", "Buzz Aldrin"],
+      "tags": ["space", "nasa", "cold-war"]
+    }
+  ],
+  "total": 196,
+  "limit": 5,
+  "offset": 0
+}
+```
+
+### GET /api/v1/moments/{path}
+
+Get a specific moment by canonical path, including its edges.
+
+```bash
+curl "https://timepoint-clockchain-deploy-private-production.up.railway.app/api/v1/moments/-44/march/15/1030/italy/lazio/rome/assassination-of-julius-caesar"
+```
+
+## Authenticated Endpoints
+
+These require `X-Service-Key` header:
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/browse` | GET | Browse graph with full metadata |
+| `/search` | GET | Search with advanced filters |
+| `/random` | GET | Random moment |
+| `/today` | GET | Today in history |
+| `/generate` | POST | Generate new moment via Flash |
+| `/ingest/tdf` | POST | Ingest TDF record |
+
+### TDF Export
+
+Add `?format=tdf` to any moment endpoint to get TDF-formatted output:
+
+```bash
+curl "https://timepoint-clockchain-deploy-private-production.up.railway.app/api/v1/moments/{path}?format=tdf" \
+  -H "X-Service-Key: YOUR_KEY"
+```
