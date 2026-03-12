@@ -24,7 +24,8 @@ No auth required. Returns service status and provider availability.
   "database": true,
   "providers": {
     "google": true,
-    "openrouter": true
+    "openrouter": true,
+    "stability": true
   }
 }
 ```
@@ -50,7 +51,7 @@ curl -X POST https://api.timepointai.com/api/v1/timepoints/generate/sync \
 | `generate_image` | boolean | No | Generate AI image (default: false) |
 | `preset` | string | No | Quality preset: `hyper`, `balanced` (default), `hd`, `gemini3` |
 | `text_model` | string | No | Text model ID — OpenRouter format (`org/model`) or Google native (`gemini-*`). Overrides preset. |
-| `image_model` | string | No | Image model ID — `pollinations` for free, or Google native. Overrides preset. |
+| `image_model` | string | No | Image model ID — Stability AI (`stabilityai/*`), `pollinations`, or Google native. Overrides preset. |
 | `model_policy` | string | No | `"permissive"` for open-weight only, Google-free generation. |
 | `llm_params` | object | No | Fine-grained LLM hyperparameters (see below). |
 | `visibility` | string | No | `public` (default) or `private` |
@@ -90,7 +91,7 @@ These controls are composable: you can combine `model_policy`, explicit models, 
 
 ### Google-Free Generation
 
-Set `model_policy: "permissive"` to route all 14 pipeline agents through open-weight models (DeepSeek R1, Llama, Qwen, Mistral) via OpenRouter with Pollinations for images — zero Google API calls, including grounding.
+Set `model_policy: "permissive"` to route all 14 pipeline agents through open-weight models (DeepSeek R1, Llama, Qwen, Mistral) via OpenRouter with Stability AI (SD3.5 Large Turbo) for images — zero Google API calls, including grounding.
 
 ```json
 {
@@ -102,7 +103,7 @@ Set `model_policy: "permissive"` to route all 14 pipeline agents through open-we
 
 ### Explicit Model Override
 
-Use `text_model` and `image_model` to specify any OpenRouter-compatible model ID (e.g. `qwen/qwen3-235b-a22b`, `deepseek/deepseek-r1-0528`) or Google native model (e.g. `gemini-2.5-flash`). Explicit overrides take priority over `model_policy`.
+Use `text_model` and `image_model` to specify any OpenRouter-compatible model ID (e.g. `qwen/qwen3-235b-a22b`, `deepseek/deepseek-r1-0528`), Stability AI model (e.g. `stabilityai/sd3.5-large-turbo`), or Google native model (e.g. `gemini-2.5-flash`). Explicit overrides take priority over `model_policy`.
 
 ```json
 {
@@ -112,6 +113,14 @@ Use `text_model` and `image_model` to specify any OpenRouter-compatible model ID
   "generate_image": true
 }
 ```
+
+**Available Stability AI image models:**
+
+| Model | Description |
+|-------|-------------|
+| `stabilityai/sd3.5-large-turbo` | Fast generation (default for permissive mode) |
+| `stabilityai/sd3.5-large` | Best quality |
+| `stabilityai/sd3.5-medium` | Balanced speed/quality |
 
 ### LLM Parameters (`llm_params`)
 
@@ -146,18 +155,21 @@ Fine-grained control over generation hyperparameters, applied uniformly across e
 
 ## Image Generation
 
-Flash uses a 3-tier fallback chain:
-
-1. **Google Imagen** (primary)
-2. **OpenRouter Flux** (fallback)
-3. **Pollinations.ai** (free fallback)
-
 Image URLs are included in the response when `generate_image: true`.
+
+**Commercial presets** (`hd`, `balanced`, `hyper`, `gemini3`):
+
+1. **Google Imagen** (primary) → **Stability AI** (fallback) → **OpenRouter** (fallback)
+
+**Permissive mode** (`model_policy: "permissive"`):
+
+1. **Stability AI** — SD3.5 Large Turbo (open-weight, no Google dependency)
 
 ## LLM Providers
 
 | Provider | Role |
 |----------|------|
 | Google Gemini | Default LLM for all agents (configurable via `text_model` or `model_policy`) |
-| OpenRouter | Open-weight models (DeepSeek, Llama, Qwen, Mistral) — used with `model_policy: "permissive"` or explicit `text_model` |
-| Pollinations | Free image generation — used with `model_policy: "permissive"` or `image_model: "pollinations"` |
+| OpenRouter | Open-weight text models (DeepSeek, Llama, Qwen, Mistral) — used with `model_policy: "permissive"` or explicit `text_model` |
+| Stability AI | Open-weight image generation (SD3.5) — default for `model_policy: "permissive"`, or explicit `image_model: "stabilityai/*"` |
+| Pollinations | Free image generation — available via `image_model: "pollinations"` |
