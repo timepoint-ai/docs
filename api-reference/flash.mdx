@@ -31,6 +31,35 @@ No auth required. Returns service status and provider availability.
 }
 ```
 
+## Authentication
+
+### POST /api/v1/auth/service-token
+
+Mint a JWT pair for an existing user, on behalf of a trusted service. Requires a valid `X-Service-Key` header.
+
+```bash
+curl -X POST https://api.timepointai.com/api/v1/auth/service-token \
+  -H "Content-Type: application/json" \
+  -H "X-Service-Key: YOUR_KEY" \
+  -d '{"user_id": "user-uuid"}'
+```
+
+**Request Body:**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `user_id` | string | Yes | Flash user UUID to mint a token for |
+
+**Response:**
+
+```json
+{
+  "access_token": "jwt-access-token",
+  "refresh_token": "jwt-refresh-token",
+  "expires_in": 3600
+}
+```
+
 ## Render Endpoints
 
 ### POST /api/v1/timepoints/generate/sync
@@ -74,6 +103,59 @@ curl -N -X POST https://api.timepointai.com/api/v1/timepoints/generate/stream \
 
 Events are streamed as each agent in the pipeline completes:
 `Judge → Timeline → Grounding → Scene → Characters → Moment → Camera → Dialog → Critique → ImagePrompt → Optimizer → ImageGen`
+
+## Content Endpoints
+
+### GET /api/v1/content/today
+
+Daily curated content. Returns empty when no content is available.
+
+```bash
+curl -X GET https://api.timepointai.com/api/v1/content/today \
+  -H "X-Service-Key: YOUR_KEY"
+```
+
+**Response:**
+
+```json
+{
+  "items": []
+}
+```
+
+### GET /api/v1/content/weekly-prompt
+
+Weekly creative prompt. Returns null when no prompt is active.
+
+```bash
+curl -X GET https://api.timepointai.com/api/v1/content/weekly-prompt \
+  -H "X-Service-Key: YOUR_KEY"
+```
+
+**Response:**
+
+```json
+{
+  "prompt": null
+}
+```
+
+### GET /api/v1/content/featured
+
+Featured timepoints collection. Returns empty when none are featured.
+
+```bash
+curl -X GET https://api.timepointai.com/api/v1/content/featured \
+  -H "X-Service-Key: YOUR_KEY"
+```
+
+**Response:**
+
+```json
+{
+  "items": []
+}
+```
 
 ## Downstream Model Control
 
@@ -174,3 +256,4 @@ Image URLs are included in the response when `generate_image: true`.
 | OpenRouter | Open-weight text models (DeepSeek, Llama, Qwen, Mistral) — used with `model_policy: "permissive"` or explicit `text_model` |
 | Stability AI | Open-weight image generation (SD3.5) — default for `model_policy: "permissive"`, or explicit `image_model: "stabilityai/*"` |
 | Pollinations | Free image generation — available via `image_model: "pollinations"` |
+

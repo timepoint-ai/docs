@@ -67,6 +67,21 @@ Content-Type: application/json
 
 # Streaming render (SSE)
 POST /api/v1/timepoints/generate/stream
+
+# Service token
+POST /api/v1/auth/service-token
+Content-Type: application/json
+
+{"user_id": "user-uuid"}
+
+# Daily curated content
+GET /api/v1/content/today
+
+# Weekly creative prompt
+GET /api/v1/content/weekly-prompt
+
+# Featured timepoints collection
+GET /api/v1/content/featured
 ```
 
 ## LLM Providers
