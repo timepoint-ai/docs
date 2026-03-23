@@ -178,3 +178,64 @@ Image URLs are included in the response when `generate_image: true`.
 | OpenRouter | Open-weight text models (DeepSeek, Llama, Qwen, Mistral) — used with `model_policy: "permissive"` or explicit `text_model` |
 | Stability AI | Open-weight image generation (SD3.5) — default for `model_policy: "permissive"`, or explicit `image_model: "stabilityai/*"` |
 | Pollinations | Free image generation — available via `image_model: "pollinations"` |
+
+## List Timepoints
+
+```bash
+GET /api/v1/timepoints
+```
+
+Returns a paginated list of timepoints. The `tdf_payload` is deferred to avoid loading 1MB+ JSON blobs per item in the list view.
+
+```json
+{
+  "items": [
+    {
+      "id": "12345",
+      "query": "AlphaGo plays Move 37, Seoul, March 10 2016",
+      "created_at": "2023-10-01T12:34:56Z",
+      "status": "completed",
+      "image_url": "https://example.com/image.jpg",
+      "image_base64": null,
+      "has_image": true,
+      "image_prompt": null,
+      "time_of_day": "afternoon",
+      "era": "modern",
+      "location": "Seoul, South Korea",
+      "visibility": "public"
+    }
+  ],
+  "total": 1,
+  "page": 1,
+  "page_size": 10
+}
+```
+
+## Stream Generation
+
+```bash
+POST /api/v1/timepoints/generate/stream
+```
+
+Generates SSE events for pipeline progress with real-time streaming. The `disconnect_check` parameter is used to detect client disconnections during the stream generation process.
+
+```json
+{
+  "query": "Moon landing, July 20 1969",
+  "generate_image": true,
+  "disconnect_check": "raw_request.is_disconnected"
+}
+```
+
+## Credit Refunds
+
+Credits are refunded on generation failure for synchronous, background, and timeout scenarios.
+
+## Request-Level Timeouts
+
+Request-level timeouts have been added to all LLM-calling endpoints to ensure that the API remains responsive and does not hang indefinitely.
+
+## Chat Sessions
+
+Chat sessions are in-memory only and will be lost on restart. Consider implementing database-backed sessions for persistence.
+
