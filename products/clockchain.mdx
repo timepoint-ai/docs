@@ -67,7 +67,7 @@ Two PostgreSQL tables: `nodes` (canonical spatiotemporal URLs as PKs) and `edges
 | Worker | Role |
 |--------|------|
 | **Renderer** | Calls Flash to upgrade layer-1 nodes to layer-2 (full scenes) |
-| **Expander** | LLM-driven graph growth — discovers related moments, renders each through Flash |
+| **Expander** | LLM-driven graph growth — discovers related moments, renders each through Flash. The expander now includes retry logic for handling malformed LLM JSON responses. |
 | **Judge** | Content moderation |
 | **Daily** | "Today in History" cron — adds new nodes for the current date |
 
