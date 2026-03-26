@@ -22,3 +22,6 @@ Thumbs.db
 scripts/.sync-state.json
 
 .local/
+
+# Claude Code
+.claude/
