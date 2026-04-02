@@ -8,7 +8,7 @@ description: "Render grounded historical moments via the 14-agent pipeline."
 **Consumer URL:** `https://api.timepointai.com` (routed via [API Gateway](/api-reference/overview#architecture))
 **Direct URL:** `https://flash.timepointai.com` (for service-to-service calls)
 
-Consumer access goes through the Gateway, which handles authentication and proxies requests to Flash with an `X-User-ID` header. Flash has `AUTH_ENABLED=false` — it does not perform any authentication itself. It trusts the `X-User-ID` injected by the Gateway.
+Consumer access goes through the Gateway, which handles authentication and proxies requests to Flash with an `X-User-ID` header. Flash has `AUTH_ENABLED=false` — it does not perform any authentication itself. It trusts the `X-User-ID` injected by the Gateway, which is forwarded to Clockchain for entity visibility filtering (allowing users to see their own private entities during search, resolution, and grounding).
 
 For service-to-service calls that bypass the Gateway, use `X-Service-Key` with the direct URL.
 
