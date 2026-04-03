@@ -37,7 +37,8 @@ curl https://clockchain.timepointai.com/api/v1/stats
   "date_range": {"min_year": -700, "max_year": 2026},
   "avg_confidence": 0.85,
   "last_updated": "2026-03-10T00:00:00Z",
-  "nodes_with_images": 561
+  "nodes_with_images": 561,
+  "nodes_with_geo": 1200
 }
 ```
 
@@ -92,6 +93,44 @@ Get a specific moment by canonical path, including its edges.
 
 ```bash
 curl "https://clockchain.timepointai.com/api/v1/moments/-44/march/15/1030/italy/lazio/rome/assassination-of-julius-caesar"
+```
+
+## System Endpoints
+
+### GET /health
+
+Instant liveness probe. Returns immediately without database I/O.
+
+```bash
+curl https://clockchain.timepointai.com/health
+```
+
+**Response:**
+```json
+{
+  "status": "healthy",
+  "service": "timepoint-clockchain"
+}
+```
+
+### GET /health/deep
+
+Deep health check. Verifies database connectivity and returns cached graph statistics.
+
+```bash
+curl https://clockchain.timepointai.com/health/deep
+```
+
+**Response:**
+```json
+{
+  "status": "healthy",
+  "service": "timepoint-clockchain",
+  "nodes": 1900,
+  "edges": 5000000,
+  "nodes_with_geo": 1200,
+  "db": "ok"
+}
 ```
 
 ## Authenticated Endpoints
