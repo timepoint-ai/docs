@@ -57,9 +57,13 @@ Two PostgreSQL tables: `nodes` (canonical spatiotemporal URLs as PKs) and `edges
 
 | Type | Meaning | Auto-linked? |
 |------|---------|-------------|
-| `causes` | Direct causal relationship | No — expander or manual |
-| `contemporaneous` | Same year (+/- 1) | Yes, weight 0.5 |
-| `same_location` | Matching geography | Yes, weight 0.5 |
+| `causes` / `caused_by` | Direct causal relationship | No — expander or manual |
+| `influences` | Indirect influence | No — expander or manual |
+| `contemporaneous` | Exact same date (year, month, day > 1) | Yes, weight 0.5 |
+| `same_era` | Same decade AND same country | Yes, weight 0.5 |
+| `precedes` / `follows` | Directional temporal (same decade & country) | Yes, weight 0.5 |
+| `same_location` | Matching country + region + city | Yes, weight 0.5 |
+| `same_figure` | Overlapping historical figures (excludes generic roles) | Yes, weight 0.5 |
 | `thematic` | Overlapping tags | Yes, weight 0.3 |
 
 ## Background Workers
@@ -70,6 +74,8 @@ Two PostgreSQL tables: `nodes` (canonical spatiotemporal URLs as PKs) and `edges
 | **Expander** | LLM-driven graph growth — discovers related moments, renders each through Flash |
 | **Judge** | Content moderation |
 | **Daily** | "Today in History" cron — adds new nodes for the current date |
+| **Edge Cleaner** | Batched removal of bad auto-generated edges (gated by `EDGE_CLEANUP_ENABLED`) |
+| **Location Backfill** | Fixes missing/unknown coordinates via LLM (gated by `LOCATION_BACKFILL_ENABLED`) |
 
 ## Public API
 
